@@ -1,3 +1,4 @@
+import 'package:api_flutter/pages/auth/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:api_flutter/pages/auth/login_screen.dart';
 import 'package:api_flutter/pages/menu_screen.dart';
@@ -49,7 +50,7 @@ class _AuthCheckState extends State<AuthCheck> {
         } else if (snapshot.hasData && snapshot.data == true) {
           return const MenuScreen();
         } else {
-          return LoginScreen();
+          return RegisterScreen();
         }
       },
     );

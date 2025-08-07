@@ -18,7 +18,10 @@ class ProductService {
     final token = await _getToken();
     final response = await http.get(
       Uri.parse(baseUrl),
-      headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+        'Accept': 'application/json',
+      },
     );
 
     if (response.statusCode == 200) {
@@ -33,7 +36,10 @@ class ProductService {
     final token = await _getToken();
     final response = await http.get(
       Uri.parse('$baseUrl/$id'),
-      headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+        'Accept': 'application/json',
+      },
     );
 
     if (response.statusCode == 200) {
@@ -59,18 +65,25 @@ class ProductService {
     request.fields['description'] = description;
     request.fields['price'] = price.toString();
 
+    String mimeType = imageName.endsWith('.png') ? 'png' : 'jpeg';
+
     request.files.add(
       http.MultipartFile.fromBytes(
         'image',
         imageBytes,
         filename: imageName,
-        contentType: MediaType('image', 'jpeg'),
+        contentType: MediaType('image', mimeType),
       ),
     );
 
     request.headers['Authorization'] = 'Bearer $token';
+    request.headers['Accept'] = 'application/json';
 
     final response = await request.send();
+    final respStr = await response.stream.bytesToString();
+
+    print('Status Code: ${response.statusCode}');
+    print('Response Body: $respStr');
 
     return response.statusCode == 201;
   }
@@ -94,17 +107,20 @@ class ProductService {
     request.fields['price'] = price.toString();
 
     if (imageBytes != null && imageName != null) {
+      String mimeType = imageName.endsWith('.png') ? 'png' : 'jpeg';
+
       request.files.add(
         http.MultipartFile.fromBytes(
           'image',
           imageBytes,
           filename: imageName,
-          contentType: MediaType('image', 'jpeg'),
+          contentType: MediaType('image', mimeType),
         ),
       );
     }
 
     request.headers['Authorization'] = 'Bearer $token';
+    request.headers['Accept'] = 'application/json';
 
     final response = await request.send();
     return response.statusCode == 200;
@@ -114,7 +130,10 @@ class ProductService {
     final token = await _getToken();
     final response = await http.delete(
       Uri.parse('$baseUrl/$id'),
-      headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+        'Accept': 'application/json',
+      },
     );
     return response.statusCode == 200;
   }
